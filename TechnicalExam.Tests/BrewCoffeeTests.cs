@@ -1,42 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Technical_Examination.WebApi.Controllers;
 using Technical_Examination.WebApi.DataContext;
+using Xunit;
 
 namespace TechnicalExam.Tests;
 
 public class BrewCoffeeTests
 {
 
-    [Theory]
-    [MemberData(nameof(BrewCasesData))]
-    public void Return503_After5Endpoints(string date, int status_code)
+    [Fact]
+    public void Return503_After5Endpoints()
     {
-        var new_coffee = new BrewCoffee
-        {
-            Prepared = DateTime.Parse(date)
-        };
         var controller = new BrewCoffeeController();
-        var result = controller.Get(new_coffee);
+        int counter = 1;
 
-        if (result.Result is ObjectResult objresult)
+        foreach (var caseData in BrewCasesData())
         {
-            Assert.Equal(status_code, objresult.StatusCode);
+            var date = (string)caseData[0];
+            var status_code = (int)caseData[1];
 
-            if (status_code == 200)
+            var new_coffee = new BrewCoffee
             {
-                var coffee = objresult.Value as BrewCoffee;
-                Assert.NotNull(coffee);
-                Assert.Equal("Your piping hot coffee is ready", coffee.Message);
-                Assert.Equal(DateTime.Parse(date), coffee.Prepared);
-            }
-            else if (status_code == 503)
+                Prepared = DateTime.Parse(date)
+            };
+            var result = controller.Get(new_coffee);
+
+            if (result.Result is ObjectResult objresult)
             {
-                Assert.Equal("503 Service Unavailable.", objresult.Value?.ToString());
+                Assert.Equal(status_code, objresult.StatusCode);
+
+                if (status_code == 200 && counter < 5)
+                {
+                    var coffee = objresult.Value as BrewCoffee;
+                    Assert.NotNull(coffee);
+                    Assert.Equal("Your piping hot coffee is ready", coffee.Message);
+                    Assert.Equal(DateTime.Parse(date), coffee.Prepared);
+                }
+                else if (status_code == 503 && counter == 5)
+                {
+                    Assert.Equal("503 Service Unavailable.", objresult.Value?.ToString());
+                }
             }
-        }
-        else if (result.Result is StatusCodeResult statusResult)
-        {
-            Assert.Equal(status_code, statusResult.StatusCode);
+            else if (result.Result is StatusCodeResult statusResult)
+            {
+                Assert.Equal(status_code, statusResult.StatusCode);
+            }
+            counter++;
         }
     }
 

@@ -27,7 +27,7 @@ public class BrewCoffeeController : ControllerBase
             var coffee = new BrewCoffee()
             {
                 Message = "Your piping hot coffee is ready",
-                Prepared = cofee_data.Prepared ?? DateTime.Parse(DateTime.Now.ToString("O"))
+                Prepared = cofee_data?.Prepared ?? DateTime.Parse(DateTime.Now.ToString("O"))
             };
             return Ok(coffee);
         }
@@ -36,5 +36,5 @@ public class BrewCoffeeController : ControllerBase
             return StatusCode(503, "503 Service Unavailable.");
         }
     }
-    public void ResetCounter() => _counter = 0;
+    public void ResetCounter() => _counter = 1;
 }
