@@ -16,8 +16,8 @@ public class BrewCoffeeTests
 
         foreach (var caseData in BrewCasesData())
         {
-            var date = (string)caseData[0];
-            var status_code = (int)caseData[1];
+            var date = caseData.Date;
+            var status_code = caseData.ExpectedStatusCode;
 
             var new_coffee = new BrewCoffee
             {
@@ -49,13 +49,21 @@ public class BrewCoffeeTests
         }
     }
 
-    public static IEnumerable<object[]> BrewCasesData()
+    public static IEnumerable<CoffeeTestCase> BrewCasesData()
     {
-        yield return new object[] { "2025-12-17T12:46:00Z", 200};
-        yield return new object[] { "2021-11-10T20:43:00+08:00", 200 };
-        yield return new object[] { "2022-02-21T14:33:00+02:00", 200 };
-        yield return new object[] { "2024-07-23T08:36:00-04:00", 200 };
-        yield return new object[] { "2026-06-06T12:06:00Z", 503};
+        return
+        [
+            new CoffeeTestCase { Date = "2025-12-17T12:46:00Z", ExpectedStatusCode = 200 },
+            new CoffeeTestCase { Date = "2021-11-10T20:43:00+08:00", ExpectedStatusCode = 200 },
+            new CoffeeTestCase { Date = "2022-02-21T14:33:00+02:00", ExpectedStatusCode = 200 },
+            new CoffeeTestCase { Date = "2024-07-23T08:36:00-04:00", ExpectedStatusCode = 200 },
+            new CoffeeTestCase { Date = "2026-06-06T12:06:00Z", ExpectedStatusCode = 503 }
+        ];
     }
 
+    public class CoffeeTestCase
+    {
+        public string Date { get; set; }
+        public int ExpectedStatusCode { get; set; }
+    }
 }
