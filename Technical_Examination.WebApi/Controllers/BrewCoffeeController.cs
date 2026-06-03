@@ -14,7 +14,7 @@ public class BrewCoffeeController : ControllerBase
     [HttpGet]
     public ActionResult<BrewCoffee> Get(BrewCoffee? cofee_data)
     {
-        var current_date = DateTime.Now;
+        var current_date = cofee_data?.Prepared ?? DateTime.Now;
         var current_month = current_date.Month;
         var current_day = current_date.Day;
 
