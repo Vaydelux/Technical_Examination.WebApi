@@ -9,7 +9,7 @@ namespace Technical_Examination.WebApi.Controllers;
 [Route("brew-coffee")]
 public class BrewCoffeeController : ControllerBase
 {
-    public static int _counter = 1;
+    public int _counter = 1;
 
     [HttpGet]
     public ActionResult<BrewCoffee> Get(BrewCoffee? cofee_data)

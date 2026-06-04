@@ -12,20 +12,19 @@ public class BrewCoffeeTests
     [Fact]
     public void Return503_After5Endpoints()
     {
-        var controller = new BrewCoffeeController();
-        int counter = 1;
+        var (counter, controller) = LoadController();
         IEnumerable<CoffeeTestCase> brewobj = BrewCasesData() ?? [];
         if (!brewobj.Any() & !(brewobj.Count() > 0 ))
             return;
         LoopEndpoints(brewobj, controller, counter);
     }
 
+    [Fact]
     public void Return418_After5Endpoints()
     {
-        var controller = new BrewCoffeeController();
-        int counter = 1;
-        IEnumerable<CoffeeTestCase> brewobj = BrewCasesData() ?? [];
-        if (!brewobj.Any() & !(brewobj.Count() > 0))
+        var (counter, controller) = LoadController();
+        IEnumerable<CoffeeTestCase> brewobj = AprilBrewCasesData() ?? [];
+        if (!brewobj.Any())
             return;
         LoopEndpoints(brewobj, controller, counter);
     }
@@ -45,15 +44,21 @@ public class BrewCoffeeTests
     {
         return
         [
-            new CoffeeTestCase { Date = "2025-04-01T12:46:00Z", ExpectedStatusCode = 200 },
-            new CoffeeTestCase { Date = "2021-04-01T20:43:00+08:00", ExpectedStatusCode = 200 },
-            new CoffeeTestCase { Date = "2022-04-01T14:33:00+02:00", ExpectedStatusCode = 200 },
-            new CoffeeTestCase { Date = "2024-04-01T08:36:00-04:00", ExpectedStatusCode = 200 },
+            new CoffeeTestCase { Date = "2025-04-01T12:46:00Z", ExpectedStatusCode = 418 },
+            new CoffeeTestCase { Date = "2021-04-01T20:43:00+08:00", ExpectedStatusCode = 418 },
+            new CoffeeTestCase { Date = "2022-04-01T14:33:00+02:00", ExpectedStatusCode = 418 },
+            new CoffeeTestCase { Date = "2024-04-01T08:36:00-04:00", ExpectedStatusCode = 418 },
             new CoffeeTestCase { Date = "2026-04-01T12:06:00Z", ExpectedStatusCode = 503 }
         ];
     }
-
-    public void LoopEndpoints(IEnumerable<CoffeeTestCase> sample_object, BrewCoffeeController controller, int counter)
+    private static (int counter, BrewCoffeeController controller) LoadController()
+    {
+        var controller = new BrewCoffeeController();
+        controller.ResetCounter();
+        int counter = 1;
+        return (counter, controller);
+    }
+    private void LoopEndpoints(IEnumerable<CoffeeTestCase> sample_object, BrewCoffeeController controller, int counter)
     {
         foreach (var caseData in sample_object)
         {
